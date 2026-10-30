@@ -12,7 +12,31 @@
   <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
-  <div class="app-shell">
+  <main class="login-screen" id="login-screen" aria-labelledby="login-title">
+    <section class="login-card">
+      <a class="brand login-brand" href="#" aria-label="DUXS">
+        <span class="brand-mark" aria-hidden="true">»</span>
+        <span class="brand-name">DUXS<small>ESPECIALISTAS EN SEGURIDAD</small></span>
+      </a>
+      <p class="eyebrow">ACCESO RESTRINGIDO</p>
+      <h1 id="login-title">Ingresar como administrador</h1>
+      <p class="login-description">Usá las credenciales de administrador para acceder a la gestión de egresos.</p>
+      <form id="login-form">
+        <label class="field">
+          <span>Usuario</span>
+          <input name="username" type="text" autocomplete="username" maxlength="100" required>
+        </label>
+        <label class="field">
+          <span>Contraseña</span>
+          <input name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <p class="login-error" id="login-error" role="alert" hidden></p>
+        <button class="button button-primary login-submit" type="submit">Iniciar sesión</button>
+      </form>
+    </section>
+  </main>
+
+  <div class="app-shell" id="app-shell" hidden>
     <aside class="sidebar" id="sidebar">
       <a class="brand" href="#inicio" aria-label="DUXS, ir al inicio" data-page="inicio">
         <span class="brand-mark" aria-hidden="true">»</span>
@@ -26,7 +50,7 @@
         <button class="nav-link" type="button" data-page="facturas"><span class="nav-icon">▤</span>Cargar facturas</button>
         <button class="nav-link" type="button" data-page="proveedores"><span class="nav-icon">♙</span>Proveedores</button>
         <button class="nav-link" type="button" data-page="clasificaciones"><span class="nav-icon">☷</span>Clasificaciones</button>
-        <button class="nav-link" type="button" data-page="pendientes"><span class="nav-icon">!</span>Pendientes de reclamo<span class="nav-count" hidden></span></button>
+        <button class="nav-link" type="button" data-page="pendientes"><span class="nav-icon">!</span>Pendientes de reclasificación<span class="nav-count" id="pending-reclassification-count" hidden></span></button>
         <button class="nav-link" type="button" data-page="base"><span class="nav-icon">▤</span>Base de datos</button>
         <button class="nav-link" type="button" data-page="reportes"><span class="nav-icon">▥</span>Reportes</button>
       </nav>
@@ -34,8 +58,8 @@
       <div class="sidebar-bottom">
         <button class="nav-link" type="button" data-page="configuracion"><span class="nav-icon">⚙</span>Configuración</button>
         <div class="sidebar-user">
-          <span class="avatar">AD</span>
-          <span class="sidebar-user-copy"><strong>Administración</strong><small>Usuario local</small></span>
+          <span class="avatar admin-avatar">AD</span>
+          <span class="sidebar-user-copy"><strong class="admin-display-name">Administración</strong><small>Administrador</small></span>
         </div>
       </div>
     </aside>
@@ -54,17 +78,12 @@
           <span aria-hidden="true">▣</span>
           <select id="period-select" aria-label="Período de consulta"></select>
         </label>
-        <button class="top-user" type="button" aria-label="Perfil local">
-          <span class="avatar">AD</span>
-          <span class="top-user-copy"><strong>Administración</strong><small>Usuario local</small></span>
-          <span class="chevron">⌄</span>
+        <button class="top-user" id="logout-button" type="button" aria-label="Cerrar sesión" title="Cerrar sesión">
+          <span class="avatar admin-avatar">AD</span>
+          <span class="top-user-copy"><strong class="admin-display-name">Administración</strong><small class="admin-username">Administrador</small></span>
+          <span class="chevron">Salir</span>
         </button>
       </header>
-
-      <div class="prototype-notice" role="status">
-        <span class="notice-icon">i</span>
-        <span><strong id="connection-title">Verificando conexión</strong> · <span id="connection-message">Consultando el servicio de datos.</span></span>
-      </div>
 
       <section class="page active" id="inicio" aria-labelledby="welcome-title">
         <div class="welcome">
@@ -77,17 +96,16 @@
         </div>
 
         <div class="section-heading">
-          <div><h2>Resumen del período</h2><p id="dashboard-period">Consultando MySQL…</p></div>
-          <span class="demo-tag" id="data-source-tag">CONECTANDO</span>
+          <div><h2>Resumen del período</h2><p id="dashboard-period">Consultando…</p></div>
         </div>
         <div class="metric-grid">
           <article class="metric-card">
             <span class="metric-icon teal">▤</span>
-            <div><p class="metric-label">Egresos del mes</p><strong class="metric-value" id="metric-total">—</strong><span class="metric-note" id="metric-total-note">Calculado desde MySQL</span></div>
+            <div><p class="metric-label">Egresos del mes</p><strong class="metric-value" id="metric-total">—</strong><span class="metric-note" id="metric-total-note">Período seleccionado</span></div>
           </article>
           <article class="metric-card">
             <span class="metric-icon blue">♙</span>
-            <div><p class="metric-label">Proveedores</p><strong class="metric-value" id="metric-suppliers">—</strong><span class="metric-note">activos en MySQL</span></div>
+            <div><p class="metric-label">Proveedores</p><strong class="metric-value" id="metric-suppliers">—</strong><span class="metric-note">registrados</span></div>
           </article>
           <article class="metric-card">
             <span class="metric-icon amber">▧</span>
@@ -95,7 +113,7 @@
           </article>
           <article class="metric-card">
             <span class="metric-icon rose">!</span>
-            <div><p class="metric-label">Pendientes</p><strong class="metric-value" id="metric-claims">—</strong><span class="metric-note">requieren atención</span></div>
+            <div><p class="metric-label">Clasificación pendiente</p><strong class="metric-value" id="metric-claims">—</strong><span class="metric-note">proveedores por clasificar</span></div>
           </article>
         </div>
 
@@ -123,12 +141,12 @@
 
         <div class="table-grid">
           <article class="panel table-panel">
-            <div class="panel-heading"><div><h2>Últimos pendientes</h2><p>Registros que requieren atención</p></div><button class="text-button" type="button" data-go="pendientes">Ver todos <span>→</span></button></div>
-            <div class="table-scroll"><table><thead><tr><th>FECHA</th><th>PROVEEDOR</th><th>CUIT</th><th>IMPORTE</th><th>ESTADO</th></tr></thead>
-              <tbody id="latest-claims"><tr><td colspan="5">Cargando datos…</td></tr></tbody></table></div>
+            <div class="panel-heading"><div><h2>Pendientes de reclasificación</h2><p>Proveedores importados para clasificar</p></div><button class="text-button" type="button" data-go="pendientes">Ver todos <span>→</span></button></div>
+            <div class="table-scroll"><table><thead><tr><th>FECHA</th><th>PROVEEDOR</th><th>CUIT</th><th>ESTADO</th></tr></thead>
+              <tbody id="latest-claims"><tr><td colspan="4">Cargando datos…</td></tr></tbody></table></div>
           </article>
           <article class="panel table-panel">
-            <div class="panel-heading"><div><h2>Últimas facturas</h2><p>Registros guardados en MySQL</p></div><button class="text-button" type="button" data-go="facturas">Ver todas <span>→</span></button></div>
+            <div class="panel-heading"><div><h2>Últimas facturas</h2><p>Comprobantes recientes</p></div><button class="text-button" type="button" data-go="facturas">Ver todas <span>→</span></button></div>
             <div class="table-scroll"><table><thead><tr><th>FECHA</th><th>COMPROBANTE</th><th>PROVEEDOR</th><th>IMPORTE</th><th>ESTADO</th></tr></thead>
               <tbody id="latest-expenses"><tr><td colspan="5">Cargando datos…</td></tr></tbody></table></div>
           </article>
@@ -136,11 +154,10 @@
       </section>
 
       <section class="page" id="egresos" aria-labelledby="egresos-title">
-        <div class="page-heading"><div><p class="eyebrow">CONSULTAS</p><h1 id="egresos-title">Egresos</h1><p>Consulta de los gastos registrados por período y empresa.</p></div><button class="button button-secondary" type="button" data-toast="La exportación todavía no está implementada.">↓ <span>Exportar</span></button></div>
+        <div class="page-heading"><div><p class="eyebrow">CONSULTAS</p><h1 id="egresos-title">Egresos</h1><p>Consulta de los gastos registrados por período y empresa.</p></div><button class="button button-secondary" id="export-expenses" type="button">↓ <span>Exportar CSV</span></button></div>
         <article class="panel list-panel">
           <div class="list-toolbar"><label class="table-search"><span>⌕</span><input class="local-search" type="search" placeholder="Buscar por CUIT, proveedor o factura..." aria-label="Buscar egresos"></label><select id="company-filter" aria-label="Filtrar por empresa"><option value="">Todas las empresas</option><option value="DUXS">DUXS</option><option value="ENZO">ENZO</option></select></div>
           <div class="table-scroll"><table><thead><tr><th>FECHA</th><th>PROVEEDOR</th><th>FACTURA</th><th>CLASIFICACIÓN</th><th>EMPRESA</th><th>IMPORTE</th></tr></thead><tbody id="expenses-table-body"><tr><td colspan="6">Cargando datos…</td></tr></tbody></table></div>
-          <p class="table-footnote">Los datos se consultan desde MySQL.</p>
         </article>
       </section>
 
@@ -170,8 +187,8 @@
                 <details class="tax-details field-wide">
                   <summary>Desglose tributario de las planillas DUXS y ENZO</summary>
                   <div class="form-grid tax-grid">
-                    <label class="field"><span>Condición IVA</span><input name="condicion-iva" placeholder="Según comprobante"></label>
-                    <label class="field"><span>Jurisdicción</span><input name="jurisdiccion" placeholder="Según comprobante"></label>
+                    <label class="field"><span>Condición IVA</span><input name="condicion-iva" maxlength="100" placeholder="Según comprobante"></label>
+                    <label class="field"><span>Jurisdicción</span><input name="jurisdiccion" maxlength="100" placeholder="Según comprobante"></label>
                     <label class="field"><span>Gravado al 21%</span><input name="gravado-21" inputmode="decimal" placeholder="$ 0,00"></label>
                     <label class="field"><span>Gravado al 10,5%</span><input name="gravado-105" inputmode="decimal" placeholder="$ 0,00"></label>
                     <label class="field"><span>Gravado al 27%</span><input name="gravado-27" inputmode="decimal" placeholder="$ 0,00"></label>
@@ -193,8 +210,6 @@
                     <label class="field"><span>ITC</span><input name="itc" inputmode="decimal" placeholder="$ 0,00"></label>
                     <label class="field"><span>Otros tributos</span><input name="otros-tributos" inputmode="decimal" placeholder="$ 0,00"></label>
                     <label class="field"><span>IVA no computable</span><input name="iva-no-computable" inputmode="decimal" placeholder="$ 0,00"></label>
-                    <label class="field"><span>Condición IVA</span><input name="condicion-iva" maxlength="100" placeholder="Según comprobante"></label>
-                    <label class="field"><span>Jurisdicción</span><input name="jurisdiccion" maxlength="100" placeholder="Según comprobante"></label>
                     <label class="field"><span>Código AFIP</span><input name="codigo-afip" maxlength="50" placeholder="Según comprobante"></label>
                     <label class="field"><span>Crédito fiscal</span><input name="credito-fiscal" maxlength="150" placeholder="Según planilla"></label>
                     <label class="field"><span>Cuenta contable</span><input name="cuenta-contable" maxlength="100" placeholder="Según planilla"></label>
@@ -205,50 +220,98 @@
             </form>
           </article>
           <aside class="panel import-panel">
-            <span class="import-icon">⇧</span><h2>Importar comprobantes</h2>
-            <p>La importación mensual de los formatos acordados se incorporará en una próxima etapa. Incluirá vista previa y validaciones antes de confirmar.</p>
-            <button class="button button-secondary button-full" type="button" data-toast="La importación de archivos se implementará en una próxima etapa.">Preparar importación</button>
-            <p class="import-hint">La carga de archivos adjuntos se habilitará más adelante.</p>
+            <span class="import-icon">i</span><h2>Importación CSV</h2>
+            <p>Podés subir el CSV de la plantilla o exportar como CSV UTF-8 la hoja “BASE DE DATOS” del archivo del contador. Se comparan los comprobantes y solo se agregan los nuevos.</p>
+            <button class="button button-secondary button-full" id="csv-template" type="button">Descargar plantilla CSV</button>
+            <label class="field"><span>Archivo CSV</span><input id="import-file" type="file" accept=".csv,text/csv"></label>
+            <button class="button button-secondary button-full" id="import-preview" type="button">Escanear CSV</button>
+            <p class="import-hint" id="import-status" role="status">Elegí un CSV con el formato de la plantilla para comenzar.</p>
+            <button class="button button-primary button-full" id="import-confirm" type="button" disabled>Importar nuevos comprobantes</button>
+            <div class="table-scroll"><table><thead><tr><th>ARCHIVO / FECHA</th><th>ESTADO</th><th>FILAS</th></tr></thead><tbody id="imports-table-body"><tr><td colspan="3">Cargando historial…</td></tr></tbody></table></div>
           </aside>
         </div>
       </section>
 
       <section class="page" id="proveedores" aria-labelledby="proveedores-title">
-        <div class="page-heading"><div><p class="eyebrow">DIRECTORIO</p><h1 id="proveedores-title">Proveedores</h1><p>Consulta de proveedores y sus clasificaciones asociadas.</p></div><button class="button button-primary" type="button" data-toast="El formulario para agregar o editar proveedores todavía no está implementado.">＋ <span>Agregar proveedor</span></button></div>
+        <div class="page-heading"><div><p class="eyebrow">DIRECTORIO</p><h1 id="proveedores-title">Proveedores</h1><p>Consultá y administrá el directorio de proveedores.</p></div><button class="button button-primary" type="button" data-form-toggle="supplier-form">＋ <span>Agregar proveedor</span></button></div>
+        <details class="panel form-panel compact-form" id="supplier-form-panel">
+          <summary id="supplier-form-title">Agregar o editar proveedor</summary>
+          <form id="supplier-form">
+            <input type="hidden" name="id">
+            <div class="form-grid">
+              <label class="field"><span>CUIT <b>*</b></span><input name="cuit" maxlength="13" placeholder="30-00000000-7" required></label>
+              <label class="field"><span>Razón social <b>*</b></span><input name="legal_name" maxlength="255" required></label>
+            </div>
+            <div class="form-actions"><button class="button button-secondary" type="reset">Limpiar</button><button class="button button-primary" type="submit">Guardar proveedor</button></div>
+          </form>
+        </details>
         <article class="panel list-panel">
-          <div class="list-toolbar"><label class="table-search"><span>⌕</span><input class="local-search" type="search" placeholder="Buscar proveedor o CUIT..." aria-label="Buscar proveedores"></label><span class="result-label">Resultados de MySQL</span></div>
-          <div class="table-scroll"><table><thead><tr><th>CUIT</th><th>RAZÓN SOCIAL</th><th>CLASIFICACIONES</th><th>ESTADO</th><th></th></tr></thead><tbody id="suppliers-table-body"><tr><td colspan="5">Cargando datos…</td></tr></tbody></table></div>
+          <div class="list-toolbar"><label class="table-search"><span>⌕</span><input class="local-search" type="search" placeholder="Buscar proveedor o CUIT..." aria-label="Buscar proveedores"></label><span class="result-label">Resultados</span></div>
+          <div class="table-scroll"><table><thead><tr><th>CUIT</th><th>RAZÓN SOCIAL</th><th>FECHA DE ALTA</th><th></th></tr></thead><tbody id="suppliers-table-body"><tr><td colspan="4">Cargando datos…</td></tr></tbody></table></div>
         </article>
       </section>
 
       <section class="page" id="clasificaciones" aria-labelledby="clasificaciones-title">
-        <div class="page-heading"><div><p class="eyebrow">CONFIGURACIÓN CONTABLE</p><h1 id="clasificaciones-title">Clasificaciones</h1><p>Relación de centros de costo, categorías y tipos de gasto.</p></div><button class="button button-primary" type="button" data-toast="La gestión de clasificaciones todavía no está implementada.">＋ <span>Nueva clasificación</span></button></div>
-        <article class="panel list-panel"><div class="list-toolbar"><label class="table-search"><span>⌕</span><input class="local-search" type="search" placeholder="Buscar clasificación..." aria-label="Buscar clasificaciones"></label><span class="result-label">Catálogo de MySQL</span></div>
-          <div class="table-scroll"><table><thead><tr><th>CENTRO DE COSTO</th><th>CATEGORÍA</th><th>TIPO DE GASTO</th><th>CUENTA</th><th>PROVEEDORES</th><th>ESTADO</th></tr></thead><tbody id="classifications-table-body"><tr><td colspan="6">Cargando datos…</td></tr></tbody></table></div>
+        <div class="page-heading"><div><p class="eyebrow">CLASIFICACIONES EXISTENTES</p><h1 id="clasificaciones-title">Clasificaciones</h1><p>Valores observados en comprobantes importados; la base no tiene catálogos independientes editables.</p></div></div>
+        <article class="panel info-panel"><span class="info-badge">Solo lectura</span><h2>Clasificaciones derivadas de comprobantes</h2><p>Centros de costo, categorías, tipos de gasto y cuentas se muestran tal como aparecen en <code>comprobantes</code>. No se crean catálogos ni asociaciones ficticias.</p></article>
+        <article class="panel list-panel"><div class="list-toolbar"><label class="table-search"><span>⌕</span><input class="local-search" type="search" placeholder="Buscar clasificación..." aria-label="Buscar clasificaciones"></label><span class="result-label">Clasificaciones</span></div>
+          <div class="table-scroll"><table><thead><tr><th>CENTRO DE COSTO</th><th>CATEGORÍA</th><th>TIPO DE GASTO</th><th>CUENTA</th><th>REGISTROS</th><th>CUIT DISTINTOS</th></tr></thead><tbody id="classifications-table-body"><tr><td colspan="6">Cargando datos…</td></tr></tbody></table></div>
         </article>
       </section>
 
       <section class="page" id="pendientes" aria-labelledby="pendientes-title">
-        <div class="page-heading"><div><p class="eyebrow">SEGUIMIENTO</p><h1 id="pendientes-title">Pendientes de reclamo</h1><p>Facturas y registros que requieren revisión.</p></div></div>
-        <article class="panel list-panel"><div class="list-toolbar"><label class="table-search"><span>⌕</span><input class="local-search" type="search" placeholder="Buscar proveedor, CUIT o comprobante..." aria-label="Buscar pendientes"></label><select id="claims-status-filter" aria-label="Filtrar pendientes"><option value="">Todos los estados</option><option value="pending">Pendiente</option><option value="resolved">Resuelto</option></select></div>
-          <div class="table-scroll"><table><thead><tr><th>FECHA</th><th>PROVEEDOR</th><th>CUIT</th><th>EMPRESA</th><th>IMPORTE</th><th>MOTIVO</th><th>ESTADO</th><th></th></tr></thead><tbody id="claims-table-body"><tr><td colspan="8">Cargando datos…</td></tr></tbody></table></div>
+        <div class="page-heading"><div><p class="eyebrow">CLASIFICACIÓN</p><h1 id="pendientes-title">Pendientes de reclasificación</h1><p>Consultá y actualizá el estado de clasificación de cada proveedor.</p></div></div>
+        <article class="panel list-panel"><div class="list-toolbar"><label class="table-search"><span>⌕</span><input class="local-search" type="search" placeholder="Buscar proveedor..." aria-label="Buscar proveedor pendiente"></label><label class="status-filter"><span>Estado</span><select id="pending-status-filter" aria-label="Filtrar por estado"><option value="">Todos</option><option value="Pendiente">Pendiente</option><option value="Resuelto">Resuelto</option></select></label><span class="result-label"><span id="pending-reclassification-total">—</span> resultados</span></div>
+          <div class="table-scroll"><table><thead><tr><th>FECHA DE CARGA</th><th>PROVEEDOR</th><th>CUIT</th><th>ESTADO</th><th>ACCIÓN</th></tr></thead><tbody id="claims-table-body"><tr><td colspan="5">Cargando proveedores…</td></tr></tbody></table></div>
         </article>
       </section>
+
+      <dialog class="supplier-dialog" id="supplier-detail-dialog" aria-labelledby="supplier-detail-title">
+        <div class="supplier-dialog-content">
+          <header class="supplier-dialog-heading">
+            <div><p class="eyebrow">FICHA DEL PROVEEDOR</p><h2 id="supplier-detail-title">Proveedor</h2></div>
+            <button class="button button-secondary" id="supplier-detail-close" type="button">Cerrar</button>
+          </header>
+          <form id="supplier-detail-form" class="supplier-detail-form">
+            <input name="id" type="hidden">
+            <div class="form-grid">
+              <label class="field"><span>CUIT <b>*</b></span><input name="cuit" maxlength="13" placeholder="30-00000000-7" required></label>
+              <label class="field"><span>Razón social <b>*</b></span><input name="legal_name" maxlength="255" required></label>
+            </div>
+            <div class="supplier-dialog-actions"><button class="button button-primary" type="submit">Guardar datos del proveedor</button></div>
+          </form>
+          <section class="supplier-history">
+            <h3>Clasificaciones de sus comprobantes</h3>
+            <p>Historial observado en comprobantes existentes; no cambia esos registros.</p>
+            <div class="table-scroll"><table><thead><tr><th>CENTRO DE COSTO</th><th>CATEGORÍA</th><th>TIPO DE GASTO</th><th>CUENTA</th><th>COMPROBANTES</th></tr></thead>
+              <tbody id="supplier-history-body"></tbody></table></div>
+          </section>
+          <form id="supplier-classification-form">
+            <h3>Asignaciones del proveedor</h3>
+            <p id="supplier-assignment-note">Podés guardar varias combinaciones de centro de costo, categoría y tipo de gasto.</p>
+            <input name="supplier_id" type="hidden">
+            <div class="supplier-assignment-list" id="supplier-assignment-list"></div>
+            <div class="supplier-dialog-actions">
+              <button class="button button-secondary" id="supplier-add-assignment" type="button">＋ Agregar combinación</button>
+              <button class="button button-primary" type="submit">Guardar asignaciones</button>
+            </div>
+          </form>
+        </div>
+      </dialog>
 
       <section class="page" id="base" aria-labelledby="base-title">
         <div class="page-heading"><div><p class="eyebrow">INFORMACIÓN</p><h1 id="base-title">Base de datos</h1><p>Resumen de entidades y catálogos obtenidos de la planilla.</p></div></div>
         <div class="metric-grid base-metrics">
-          <article class="metric-card"><span class="metric-icon blue">☷</span><div><p class="metric-label">Categorías</p><strong class="metric-value" id="base-categories">—</strong><span class="metric-note">catálogo DATOS del Excel</span></div></article>
-          <article class="metric-card"><span class="metric-icon amber">⌂</span><div><p class="metric-label">Centros de costo</p><strong class="metric-value" id="base-cost-centers">—</strong><span class="metric-note">catálogo DATOS del Excel</span></div></article>
-          <article class="metric-card"><span class="metric-icon rose">↻</span><div><p class="metric-label">Tipos de gasto</p><strong class="metric-value" id="base-expense-types">—</strong><span class="metric-note">catálogo DATOS del Excel</span></div></article>
-          <article class="metric-card"><span class="metric-icon teal">♙</span><div><p class="metric-label">Proveedores</p><strong class="metric-value" id="base-suppliers">—</strong><span class="metric-note">activos en MySQL</span></div></article>
+          <article class="metric-card"><span class="metric-icon blue">☷</span><div><p class="metric-label">Categorías</p><strong class="metric-value" id="base-categories">—</strong><span class="metric-note">valores distintos en comprobantes</span></div></article>
+          <article class="metric-card"><span class="metric-icon amber">⌂</span><div><p class="metric-label">Centros de costo</p><strong class="metric-value" id="base-cost-centers">—</strong><span class="metric-note">valores distintos en comprobantes</span></div></article>
+          <article class="metric-card"><span class="metric-icon rose">↻</span><div><p class="metric-label">Tipos de gasto</p><strong class="metric-value" id="base-expense-types">—</strong><span class="metric-note">valores distintos en comprobantes</span></div></article>
+          <article class="metric-card"><span class="metric-icon teal">♙</span><div><p class="metric-label">Proveedores</p><strong class="metric-value" id="base-suppliers">—</strong><span class="metric-note">filas en proveedores</span></div></article>
         </div>
-        <article class="panel info-panel"><span class="info-badge">Migración controlada</span><h2>Catálogos del Excel listos en el esquema</h2><p>El esquema toma del catálogo DATOS las categorías, los centros de costo y los tipos de gasto. Las facturas, proveedores y fórmulas no se importan automáticamente: requieren conciliación y una vista previa antes de guardar los registros.</p></article>
       </section>
 
       <section class="page" id="reportes" aria-labelledby="reportes-title">
         <div class="page-heading"><div><p class="eyebrow">ANÁLISIS</p><h1 id="reportes-title">Reportes</h1><p>Gastos agrupados por categoría para el período.</p></div><label class="period-picker report-period"><span aria-hidden="true">▣</span><select id="report-period-select" aria-label="Período del reporte"></select></label></div>
-        <div class="report-grid"><article class="panel report-panel"><div class="panel-heading"><div><h2>Total neto por categoría</h2><p>La misma métrica que resume la tabla dinámica del Excel</p></div></div><div class="report-bars" id="report-bars"><p class="empty-message">Cargando datos…</p></div></article><article class="panel report-note"><span class="metric-icon teal">▥</span><h2>Reportes por categoría</h2><p>El resumen utiliza las categorías definidas en el catálogo DATOS del Excel.</p><button class="button button-secondary" type="button" data-toast="La exportación se incorporará en una próxima etapa.">Exportación próximamente</button></article></div>
+        <div class="report-grid"><article class="panel report-panel"><div class="panel-heading"><div><h2>Total neto por categoría</h2><p>Suma de <code>total_neto</code> agrupada por categoría en <code>comprobantes</code>.</p></div><button class="button button-secondary" id="export-report" type="button">Exportar CSV</button></div><div class="report-bars" id="report-bars"><p class="empty-message">Cargando datos…</p></div></article><article class="panel report-note"><span class="metric-icon teal">▥</span><h2>Reportes por categoría</h2><p>Las agrupaciones se calculan con los valores existentes en la base importada.</p></article></div>
       </section>
 
       <section class="page" id="configuracion" aria-labelledby="configuracion-title">
@@ -256,7 +319,7 @@
         <article class="panel settings-panel"><h2>Empresas</h2><p>Empresas contempladas para el sistema de gestión.</p><div class="settings-row"><div><strong>DUXS</strong><span>Empresa habilitada en el diseño</span></div><span class="status-badge complete">Incluida</span></div><div class="settings-row"><div><strong>ENZO</strong><span>Empresa habilitada en el diseño</span></div><span class="status-badge complete">Incluida</span></div><div class="settings-row"><div><strong>Período seleccionado</strong><span>Selector de período de consulta</span></div><span class="company-pill" id="selected-period-label">—</span></div></article>
       </section>
 
-      <footer class="footer"><span>DUXS · Gestión de egresos</span><span>Aplicación local · PHP + MySQL</span></footer>
+      <footer class="footer"><span>DUXS · Gestión de egresos</span><span>Aplicación local</span></footer>
     </main>
   </div>
 
@@ -272,6 +335,11 @@
     let toastTimer;
     let csrfToken = "";
     let dashboardData = null;
+    let pendingImport = null;
+    let supplierCatalogs = { costCenters: [], categories: [], expenseTypes: [] };
+    const appShell = document.querySelector("#app-shell");
+    const loginScreen = document.querySelector("#login-screen");
+    const loginError = document.querySelector("#login-error");
 
     const htmlEscape = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -311,6 +379,13 @@
       });
       const result = await response.json();
       if (!response.ok) {
+        if ((response.status === 401 || response.status === 403)
+          && !["auth.login", "auth.session"].includes(action)) {
+          appShell.hidden = true;
+          loginScreen.hidden = false;
+          loginError.textContent = "La sesión venció o dejó de estar activa. Iniciá sesión nuevamente.";
+          loginError.hidden = false;
+        }
         const error = new Error(result.error || `Error del servidor (${response.status}).`);
         error.status = response.status;
         error.code = result.code;
@@ -319,14 +394,28 @@
       return result;
     }
 
-    function setConnectionState(connected, message = "") {
-      document.querySelector("#connection-title").textContent = connected
-        ? "Conectado a MySQL" : "Conexión a MySQL no disponible";
-      document.querySelector("#connection-message").textContent = connected
-        ? "Los datos se consultan desde la base; esta aplicación no usa registros de muestra."
-        : message;
-      document.querySelector(".prototype-notice").classList.toggle("connection-error", !connected);
-      document.querySelector("#data-source-tag").textContent = connected ? "DATOS DE MYSQL" : "SIN CONEXIÓN";
+    function showAuthenticatedApp(user) {
+      document.querySelectorAll(".admin-display-name").forEach((element) => {
+        element.textContent = user.displayName;
+      });
+      document.querySelector(".admin-username").textContent = user.username;
+      const initials = user.displayName.trim().split(/\s+/).slice(0, 2)
+        .map((part) => part.charAt(0).toLocaleUpperCase("es-AR")).join("");
+      document.querySelectorAll(".admin-avatar").forEach((element) => {
+        element.textContent = initials || "AD";
+      });
+      loginScreen.hidden = true;
+      loginError.hidden = true;
+      appShell.hidden = false;
+    }
+
+    function showLogin(message = "") {
+      appShell.hidden = true;
+      loginScreen.hidden = false;
+      loginError.textContent = message;
+      loginError.hidden = message === "";
+      document.querySelector("#login-form").elements.password.value = "";
+      document.querySelector("#login-form").elements.username.focus();
     }
 
     function emptyRow(columns, message = "No hay registros para mostrar.") {
@@ -353,16 +442,20 @@
       const data = await apiRequest("bootstrap", { params: { month } });
       dashboardData = data;
       const summary = data.summary;
-      document.querySelector("#dashboard-period").textContent = `Indicadores desde MySQL · ${month}`;
+      const unassignedRecords = Number(data.unassigned_period_records || 0);
+      document.querySelector("#dashboard-period").textContent = unassignedRecords
+        ? `${monthLabel(month)} · ${unassignedRecords} comprobantes sin período por fecha inválida`
+        : monthLabel(month);
       document.querySelector("#selected-period-label").textContent = monthLabel(month);
       document.querySelector("#metric-total").textContent = money(summary.total_amount);
       document.querySelector("#metric-suppliers").textContent = Number(summary.suppliers_count).toLocaleString("es-AR");
       document.querySelector("#metric-expenses").textContent = Number(summary.expenses_count).toLocaleString("es-AR");
       const pendingCount = Number(summary.pending_count || 0);
       document.querySelector("#metric-claims").textContent = pendingCount.toLocaleString("es-AR");
-      const pendingBadge = document.querySelector(".nav-count");
+      const pendingBadge = document.querySelector("#pending-reclassification-count");
       pendingBadge.textContent = pendingCount > 99 ? "99+" : String(pendingCount);
       pendingBadge.hidden = pendingCount === 0;
+      document.querySelector("#pending-reclassification-total").textContent = pendingCount.toLocaleString("es-AR");
       document.querySelector("#base-suppliers").textContent = Number(summary.suppliers_count).toLocaleString("es-AR");
       document.querySelector("#base-categories").textContent = Number(summary.categories_count).toLocaleString("es-AR");
       document.querySelector("#base-cost-centers").textContent = Number(summary.cost_centers_count).toLocaleString("es-AR");
@@ -403,7 +496,7 @@
           </div>`).join("")
         : '<p class="empty-message">Todavía no hay egresos categorizados.</p>';
 
-      const maxTypeTotal = Math.max(...data.expense_types.map((item) => Number(item.total || 0)), 0);
+      const maxTypeTotal = data.expense_types.reduce((max, item) => Math.max(max, Number(item.total || 0)), 0);
       document.querySelector("#expense-type-bars").innerHTML = data.expense_types.length
         ? data.expense_types.map((item) => {
           const total = Number(item.total || 0);
@@ -415,9 +508,10 @@
 
       const claimRows = data.claims.map((claim) => `<tr>
         <td>${htmlEscape(dateLabel(claim.created_at))}</td><td>${htmlEscape(claim.supplier_name)}</td>
-        <td>${htmlEscape(claim.supplier_cuit || "—")}</td><td>${htmlEscape(money(claim.amount))}</td>
-        <td><span class="status-badge pending">${htmlEscape(claim.reason)}</span></td></tr>`);
-      document.querySelector("#latest-claims").innerHTML = claimRows.join("") || emptyRow(5);
+        <td>${htmlEscape(claim.cuit || "Sin CUIT")}</td>
+        <td><span class="status-badge pending">${htmlEscape(claim.status)}</span></td></tr>`);
+      document.querySelector("#latest-claims").innerHTML = claimRows.join("")
+        || emptyRow(4, "No hay proveedores pendientes de clasificación.");
       const latestRows = data.expenses.map((item) => `<tr>
         <td>${htmlEscape(dateLabel(item.issue_date))}</td><td>${htmlEscape(item.document_number)}</td>
         <td>${htmlEscape(item.supplier_name || "—")}</td><td>${htmlEscape(money(item.total_amount))}</td>
@@ -431,7 +525,6 @@
           return `<div class="report-bar-row"><div><span>${htmlEscape(category.name)}</span><strong>${htmlEscape(money(category.total))}</strong></div><div class="bar-track"><i style="width:${width}%"></i></div></div>`;
         }).join("") || '<p class="empty-message">Todavía no hay egresos categorizados.</p>';
       }
-      setConnectionState(true);
     }
 
     async function loadPeriods() {
@@ -445,6 +538,11 @@
 
     async function loadCatalogs() {
       const data = await apiRequest("catalogs");
+      supplierCatalogs = {
+        costCenters: data.costCenters,
+        categories: data.categories,
+        expenseTypes: data.expenseTypes
+      };
       const fields = [
         ["[name='centro-costo']", data.costCenters],
         ["[name='categoria']", data.categories],
@@ -452,6 +550,7 @@
       ];
       fields.forEach(([selector, items]) => {
         const select = document.querySelector(`#invoice-form ${selector}`);
+        select.innerHTML = '<option value="">Seleccionar</option>';
         select.insertAdjacentHTML("beforeend", items.map((item) =>
           `<option value="${htmlEscape(item.name)}">${htmlEscape(item.name)}</option>`
         ).join(""));
@@ -472,11 +571,70 @@
       document.querySelector("#suppliers-table-body").innerHTML = data.items.length
         ? data.items.map((supplier) => `<tr>
           <td>${htmlEscape(supplier.cuit || "—")}</td><td>${htmlEscape(supplier.legal_name)}</td>
-          <td>${htmlEscape(supplier.categories || "—")}</td>
-          <td><span class="status-badge ${Number(supplier.active) ? "complete" : "pending"}">${Number(supplier.active) ? "Activo" : "Inactivo"}</span></td>
-          <td><button class="row-action" type="button" data-toast="La edición de proveedores estará disponible en la siguiente etapa.">Ver</button></td>
+          <td>${htmlEscape(dateLabel(supplier.created_at))}</td>
+          <td class="supplier-row-actions">
+            <button class="row-action" type="button" data-view-supplier="${Number(supplier.id)}">Ver ficha</button>
+            <button class="row-action" type="button" data-edit-supplier="${Number(supplier.id)}"
+              data-cuit="${htmlEscape(supplier.cuit || "")}" data-legal-name="${htmlEscape(supplier.legal_name)}">Editar</button>
+          </td>
         </tr>`).join("")
-        : emptyRow(5);
+        : emptyRow(4);
+      document.querySelectorAll("[data-edit-supplier]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const form = document.querySelector("#supplier-form");
+          form.elements.id.value = button.dataset.editSupplier;
+          form.elements.cuit.value = button.dataset.cuit;
+          form.elements.legal_name.value = button.dataset.legalName;
+          document.querySelector("#supplier-form-title").textContent = "Editar proveedor";
+          document.querySelector("#supplier-form-panel").open = true;
+          form.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+      document.querySelectorAll("[data-view-supplier]").forEach((button) => {
+        button.addEventListener("click", () => {
+          openSupplierDetails(Number(button.dataset.viewSupplier))
+            .catch((error) => showToast(error.message));
+        });
+      });
+    }
+
+    function supplierAssignmentRow(assignment = {}) {
+      const options = (values, selected) => [
+        '<option value="">Seleccionar</option>',
+        ...values.map((item) => `<option value="${htmlEscape(item.name)}"${item.name === selected ? " selected" : ""}>${htmlEscape(item.name)}</option>`)
+      ].join("");
+      return `<div class="supplier-assignment-row">
+        <label class="field"><span>Centro de costo</span><select data-assignment-field="centro_de_costo" required>${options(supplierCatalogs.costCenters, assignment.centro_de_costo)}</select></label>
+        <label class="field"><span>Categoría</span><select data-assignment-field="categoria" required>${options(supplierCatalogs.categories, assignment.categoria)}</select></label>
+        <label class="field"><span>Tipo de gasto</span><select data-assignment-field="tipo_de_gasto" required>${options(supplierCatalogs.expenseTypes, assignment.tipo_de_gasto)}</select></label>
+        <button class="row-action supplier-assignment-remove" type="button">Quitar</button>
+      </div>`;
+    }
+
+    async function openSupplierDetails(supplierId) {
+      const data = await apiRequest("supplier.detail", { params: { id: supplierId } });
+      document.querySelector("#supplier-detail-title").textContent = data.supplier.legal_name;
+      const supplierForm = document.querySelector("#supplier-detail-form");
+      supplierForm.elements.id.value = data.supplier.id;
+      supplierForm.elements.cuit.value = data.supplier.cuit || "";
+      supplierForm.elements.legal_name.value = data.supplier.legal_name;
+      document.querySelector("#supplier-classification-form").elements.supplier_id.value = data.supplier.id;
+      document.querySelector("#supplier-history-body").innerHTML = data.history.length
+        ? data.history.map((item) => `<tr>
+          <td>${htmlEscape(item.centro_de_costo || "—")}</td>
+          <td>${htmlEscape(item.categoria || "—")}</td>
+          <td>${htmlEscape(item.tipo_de_gasto || "—")}</td>
+          <td>${htmlEscape(item.cuenta_contable || "—")}</td>
+          <td>${htmlEscape(item.records_count)}</td>
+        </tr>`).join("")
+        : emptyRow(5, "No hay comprobantes asociados a este CUIT.");
+      document.querySelector("#supplier-assignment-list").innerHTML =
+        data.assignments.map((assignment) => supplierAssignmentRow(assignment)).join("");
+      document.querySelector("#supplier-assignment-note").textContent = data.assignments_from_history
+        ? "Combinaciones sugeridas desde los comprobantes históricos. Al guardarlas, quedarán como asignaciones editables."
+        : "Podés guardar varias combinaciones de centro de costo, categoría y tipo de gasto.";
+      const dialog = document.querySelector("#supplier-detail-dialog");
+      if (!dialog.open) dialog.showModal();
     }
 
     async function loadClassifications() {
@@ -484,35 +642,46 @@
       document.querySelector("#classifications-table-body").innerHTML = data.items.length
         ? data.items.map((item) => `<tr><td>${htmlEscape(item.cost_center || "—")}</td>
           <td>${htmlEscape(item.category || "—")}</td><td>${htmlEscape(item.expense_type || "—")}</td>
-          <td>${htmlEscape(item.account_code || "—")}</td><td>${htmlEscape(item.suppliers_count)}</td>
-          <td><span class="status-badge ${Number(item.active) ? "complete" : "pending"}">${Number(item.active) ? "Activa" : "Inactiva"}</span></td></tr>`).join("")
+          <td>${htmlEscape(item.account_code || "—")}</td><td>${htmlEscape(item.records_count)}</td>
+          <td>${htmlEscape(item.suppliers_count)}</td></tr>`).join("")
         : emptyRow(6);
     }
 
-    async function loadClaims() {
-      const data = await apiRequest("claims");
-      const status = document.querySelector("#claims-status-filter").value;
-      const rows = data.items.filter((claim) => !status || claim.status === status).map((claim) => `<tr>
+    async function loadClaims(query = document.querySelector("#pendientes .local-search").value.trim()) {
+      const status = document.querySelector("#pending-status-filter").value;
+      const data = await apiRequest("claims", { params: { q: query, status } });
+      if (!data.available) {
+        document.querySelector("#claims-table-body").innerHTML = emptyRow(5, data.message);
+        return;
+      }
+      const rows = data.items.map((claim) => `<tr>
         <td>${htmlEscape(dateLabel(claim.created_at))}</td><td>${htmlEscape(claim.supplier_name)}</td>
-        <td>${htmlEscape(claim.supplier_cuit || "—")}</td><td>${htmlEscape(claim.company || "—")}</td>
-        <td>${htmlEscape(money(claim.amount))}</td><td>${htmlEscape(claim.reason)}</td>
-        <td><span class="status-badge ${claim.status === "resolved" ? "complete" : "pending"}">${claim.status === "resolved" ? "Resuelto" : "Pendiente"}</span></td>
-        <td>${claim.status === "pending" ? `<button class="row-action" type="button" data-resolve="${Number(claim.id)}">Resolver</button>` : "—"}</td>
+        <td>${htmlEscape(claim.cuit || "Sin CUIT en la base")}</td>
+        <td><span class="status-badge ${claim.status === "Resuelto" ? "complete" : "pending"}">${htmlEscape(claim.status)}</span></td>
+        <td class="claim-actions">
+          <button class="button button-secondary pending-classify" type="button"
+            data-supplier-id="${Number(claim.supplier_id || 0)}" data-cuit="${htmlEscape(claim.cuit || "")}"
+            data-name="${htmlEscape(claim.supplier_name)}">Ver / clasificar</button>
+          <button class="button button-secondary reclassification-toggle" type="button"
+            data-id="${Number(claim.id)}" data-status="${claim.status === "Pendiente" ? "Resuelto" : "Pendiente"}">
+            ${claim.status === "Pendiente" ? "Marcar resuelto" : "Volver a pendiente"}
+          </button>
+        </td>
       </tr>`);
-      document.querySelector("#claims-table-body").innerHTML = rows.join("") || emptyRow(8);
-      document.querySelectorAll("[data-resolve]").forEach((button) => {
-        button.addEventListener("click", async () => {
-          if (!window.confirm("¿Marcar este pendiente como resuelto?")) return;
-          try {
-            await apiRequest("claim.resolve", { method: "POST", body: { id: Number(button.dataset.resolve) } });
-            showToast("Pendiente marcado como resuelto.");
-            await loadClaims();
-            await loadDashboard();
-          } catch (error) {
-            showToast(error.message);
-          }
-        });
-      });
+      document.querySelector("#claims-table-body").innerHTML = rows.join("") || emptyRow(5);
+      document.querySelector("#pending-reclassification-total").textContent = data.items.length.toLocaleString("es-AR");
+    }
+
+    async function loadImports() {
+      const data = await apiRequest("imports");
+      if (!data.available) {
+        document.querySelector("#imports-table-body").innerHTML = emptyRow(3, data.message);
+        return;
+      }
+      document.querySelector("#imports-table-body").innerHTML = data.items.length
+        ? data.items.map((item) => `<tr><td>${htmlEscape(item.filename)}<br><small>${htmlEscape(dateLabel(item.created_at))}</small></td>
+          <td>${htmlEscape(item.status)}</td><td>${Number(item.imported_rows)}/${Number(item.total_rows)}</td></tr>`).join("")
+        : emptyRow(3, "Todavía no hay importaciones.");
     }
 
     async function loadAllData() {
@@ -522,17 +691,50 @@
         await loadPeriods();
         await loadCatalogs();
         await loadDashboard();
-        await Promise.all([loadExpenses(), loadSuppliers(), loadClassifications(), loadClaims()]);
+        await Promise.all([loadExpenses(), loadSuppliers(), loadClassifications(), loadClaims(), loadImports()]);
       } catch (error) {
-        setConnectionState(false, error.message);
+        showToast(error.message);
         document.querySelectorAll("#latest-claims, #latest-expenses, #expenses-table-body, #suppliers-table-body, #classifications-table-body, #claims-table-body").forEach((target) => {
-          target.innerHTML = emptyRow(target.closest("table").querySelectorAll("thead th").length, "No se pudieron cargar datos. Revisá la conexión con MySQL.");
+          target.innerHTML = emptyRow(target.closest("table").querySelectorAll("thead th").length, "No se pudieron cargar los datos. Intentá actualizar la página.");
         });
         ["#metric-total", "#metric-suppliers", "#metric-expenses", "#metric-claims", "#category-total", "#base-suppliers", "#base-categories", "#base-cost-centers", "#base-expense-types"].forEach((selector) => {
           document.querySelector(selector).textContent = "—";
         });
       }
     }
+
+    document.querySelector("#login-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const submit = form.querySelector("button[type='submit']");
+      const values = new FormData(form);
+      submit.disabled = true;
+      loginError.hidden = true;
+      try {
+        const result = await apiRequest("auth.login", {
+          method: "POST",
+          body: { username: values.get("username"), password: values.get("password") }
+        });
+        csrfToken = result.csrfToken;
+        showAuthenticatedApp(result.user);
+        await loadAllData();
+      } catch (error) {
+        loginError.textContent = error.message;
+        loginError.hidden = false;
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    document.querySelector("#logout-button").addEventListener("click", async () => {
+      try {
+        const result = await apiRequest("auth.logout", { method: "POST", body: {} });
+        csrfToken = result.csrfToken;
+        showLogin();
+      } catch (error) {
+        showToast(error.message);
+      }
+    });
 
     function showPage(pageId) {
       const target = document.getElementById(pageId);
@@ -557,7 +759,7 @@
       });
       closeMenu();
       if (pageId === "reportes" && dashboardData) {
-        loadDashboard().catch((error) => setConnectionState(false, error.message));
+        loadDashboard().catch((error) => showToast(error.message));
       }
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -585,15 +787,45 @@
       toastTimer = window.setTimeout(() => toast.classList.remove("toast-visible"), 3200);
     }
 
+    function csvCell(value) {
+      let text = String(value ?? "");
+      if (/^[\t\r\n ]*[=+\-@]/.test(text)) text = `'${text}`;
+      return `"${text.replace(/"/g, '""')}"`;
+    }
+
+    function downloadCsv(filename, headers, rows) {
+      const content = `\uFEFF${[headers, ...rows].map((row) => row.map(csvCell).join(",")).join("\r\n")}`;
+      const url = URL.createObjectURL(new Blob([content], { type: "text/csv;charset=utf-8" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
     navLinks.forEach((link) => link.addEventListener("click", () => showPage(link.dataset.page)));
     document.querySelectorAll("[data-go]").forEach((button) => {
       button.addEventListener("click", () => showPage(button.dataset.go));
+    });
+    document.querySelectorAll("[data-form-toggle]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const panel = document.querySelector(`#${button.dataset.formToggle}-panel`);
+        if (button.dataset.formToggle === "supplier-form") {
+          document.querySelector("#supplier-form").reset();
+          document.querySelector("#supplier-form-title").textContent = "Agregar o editar proveedor";
+        }
+        panel.open = true;
+        panel.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
     });
     document.querySelectorAll(".local-search").forEach((input) => {
       input.addEventListener("input", () => {
         const query = input.value.trim();
         if (input.closest("#egresos")) loadExpenses(query).catch((error) => showToast(error.message));
         else if (input.closest("#proveedores")) loadSuppliers(query).catch((error) => showToast(error.message));
+        else if (input.closest("#pendientes")) loadClaims(query).catch((error) => showToast(error.message));
         else filterRows(input);
       });
     });
@@ -602,16 +834,267 @@
       const localSearch = activePage.querySelector(".local-search");
       if (localSearch) {
         localSearch.value = event.currentTarget.value;
-        filterRows(localSearch);
+        if (activePage.id === "pendientes") loadClaims(localSearch.value.trim()).catch((error) => showToast(error.message));
+        else filterRows(localSearch);
+      }
+    });
+    document.querySelector("#pending-status-filter").addEventListener("change", () => {
+      loadClaims().catch((error) => showToast(error.message));
+    });
+    document.querySelector("#claims-table-body").addEventListener("click", async (event) => {
+      const classifyButton = event.target.closest(".pending-classify");
+      if (classifyButton) {
+        showPage("proveedores");
+        const supplierId = Number(classifyButton.dataset.supplierId);
+        if (supplierId > 0) {
+          openSupplierDetails(supplierId).catch((error) => showToast(error.message));
+          return;
+        }
+
+        const form = document.querySelector("#supplier-form");
+        form.reset();
+        form.elements.id.value = "";
+        form.elements.cuit.value = classifyButton.dataset.cuit;
+        form.elements.legal_name.value = classifyButton.dataset.name;
+        document.querySelector("#supplier-form-title").textContent = "Agregar proveedor pendiente";
+        const panel = document.querySelector("#supplier-form-panel");
+        panel.open = true;
+        panel.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (!classifyButton.dataset.cuit) {
+          showToast("No se encontró un CUIT único para este pendiente. Ingresalo para poder guardarlo.");
+        }
+        return;
+      }
+
+      const button = event.target.closest(".reclassification-toggle");
+      if (!button) return;
+      button.disabled = true;
+      try {
+        const response = await apiRequest("reclassification.update", {
+          method: "POST",
+          body: { id: Number(button.dataset.id), status: button.dataset.status }
+        });
+        showToast(response.message);
+        await Promise.all([loadClaims(), loadDashboard()]);
+      } catch (error) {
+        showToast(error.message);
+        button.disabled = false;
+      }
+    });
+    document.querySelector("#supplier-detail-close").addEventListener("click", () => {
+      document.querySelector("#supplier-detail-dialog").close();
+    });
+    document.querySelector("#supplier-detail-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      if (!form.reportValidity()) return;
+      const submit = form.querySelector("button[type='submit']");
+      const supplierId = Number(form.elements.id.value);
+      submit.disabled = true;
+      try {
+        const response = await apiRequest("supplier.update", {
+          method: "POST",
+          body: {
+            id: supplierId,
+            cuit: form.elements.cuit.value,
+            legal_name: form.elements.legal_name.value
+          }
+        });
+        showToast(response.message);
+        await Promise.all([
+          openSupplierDetails(supplierId),
+          loadSuppliers(),
+          loadClaims(),
+          loadDashboard()
+        ]);
+      } catch (error) {
+        showToast(error.message);
+      } finally {
+        submit.disabled = false;
+      }
+    });
+    document.querySelector("#supplier-add-assignment").addEventListener("click", () => {
+      document.querySelector("#supplier-assignment-list")
+        .insertAdjacentHTML("beforeend", supplierAssignmentRow());
+    });
+    document.querySelector("#supplier-assignment-list").addEventListener("click", (event) => {
+      const button = event.target.closest(".supplier-assignment-remove");
+      if (button) button.closest(".supplier-assignment-row").remove();
+    });
+    document.querySelector("#supplier-classification-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      if (!form.reportValidity()) return;
+
+      const saveButton = form.querySelector("button[type='submit']");
+      const assignments = [...form.querySelectorAll(".supplier-assignment-row")].map((row) =>
+        Object.fromEntries([...row.querySelectorAll("[data-assignment-field]")].map((select) => [
+          select.dataset.assignmentField,
+          select.value
+        ]))
+      );
+      if (assignments.length === 0) {
+        showToast("Agregá al menos una combinación para guardar las asignaciones.");
+        return;
+      }
+      saveButton.disabled = true;
+      try {
+        const response = await apiRequest("supplier.classifications.update", {
+          method: "POST",
+          body: { supplier_id: Number(form.elements.supplier_id.value), assignments }
+        });
+        showToast(response.message);
+        document.querySelector("#supplier-detail-dialog").close();
+      } catch (error) {
+        showToast(error.message);
+      } finally {
+        saveButton.disabled = false;
       }
     });
     document.querySelectorAll("[data-toast]").forEach((button) => {
       button.addEventListener("click", () => showToast(button.dataset.toast));
     });
+    document.querySelector("#supplier-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const values = new FormData(form);
+      const id = values.get("id");
+      const creating = !id;
+      const payload = {
+        cuit: values.get("cuit"),
+        legal_name: values.get("legal_name")
+      };
+      if (id) payload.id = Number(id);
+      try {
+        const response = await apiRequest(id ? "supplier.update" : "supplier.create", { method: "POST", body: payload });
+        showToast(response.message);
+        form.reset();
+        form.elements.id.value = "";
+        document.querySelector("#supplier-form-title").textContent = "Agregar o editar proveedor";
+        document.querySelector("#supplier-form-panel").open = false;
+        await Promise.all([loadSuppliers(), loadCatalogs(), loadDashboard()]);
+        if (creating) {
+          await openSupplierDetails(response.id);
+        }
+      } catch (error) {
+        showToast(error.message);
+      }
+    });
+    document.querySelector("#supplier-form").addEventListener("reset", () => {
+      window.setTimeout(() => {
+        document.querySelector("#supplier-form").elements.id.value = "";
+        document.querySelector("#supplier-form-title").textContent = "Agregar o editar proveedor";
+      });
+    });
+    document.querySelector("#csv-template").addEventListener("click", () => {
+      const headers = [
+        "company", "month", "issue_date", "document_number", "supplier_cuit", "supplier_name",
+        "net_amount", "vat_total", "perceptions_total", "other_taxes_total", "total_amount",
+        "cost_center", "category", "expense_type", "observations"
+      ];
+      downloadCsv("plantilla-egresos-duxs.csv", headers, []);
+    });
+    document.querySelector("#import-file").addEventListener("change", () => {
+      pendingImport = null;
+      document.querySelector("#import-confirm").disabled = true;
+      document.querySelector("#import-status").textContent = "Validá el archivo seleccionado antes de importarlo.";
+    });
+    document.querySelector("#import-preview").addEventListener("click", async () => {
+      const file = document.querySelector("#import-file").files[0];
+      if (!file) {
+        showToast("Seleccioná un archivo CSV.");
+        return;
+      }
+      if (!file.name.toLocaleLowerCase("es").endsWith(".csv") || file.size > 800000) {
+        showToast("El archivo debe ser CSV y no superar 800 KB.");
+        return;
+      }
+      try {
+        const csv = await file.text();
+        const response = await apiRequest("imports.validate", {
+          method: "POST", body: { filename: file.name, csv }
+        });
+        const supplierNote = response.new_suppliers
+          ? ` Se crearán ${response.new_suppliers} proveedores nuevos con CUIT.`
+          : "";
+        const payrollNote = response.payroll_rows
+          ? ` ${response.payroll_rows} fila(s) de Sueldos se importarán sin CUIT ni comprobante, con una referencia interna para evitar duplicados.`
+          : "";
+        const taxNote = response.tax_summary_rows
+          ? ` ${response.tax_summary_rows} resumen(es) de Impuestos sin fecha ni comprobante usarán el primer día del mes de la planilla.`
+          : "";
+        const ignoredNote = response.ignored_rows?.length
+          ? ` Se omitirán ${response.ignored_rows.length} fila(s) incompletas o sin comprobante que requieren revisión (filas ${response.ignored_rows.join(", ")}).`
+          : "";
+        document.querySelector("#import-status").textContent =
+          `${response.new_rows} registros nuevos; ${response.duplicate_rows} repetidos se omitirán.${supplierNote}${payrollNote}${taxNote}${ignoredNote}`;
+        pendingImport = response.new_rows > 0 ? { filename: file.name, csv } : null;
+        document.querySelector("#import-confirm").disabled = pendingImport === null;
+      } catch (error) {
+        pendingImport = null;
+        document.querySelector("#import-status").textContent = error.message;
+        document.querySelector("#import-confirm").disabled = true;
+      }
+    });
+    document.querySelector("#import-confirm").addEventListener("click", async () => {
+      if (!pendingImport) return;
+      const confirmButton = document.querySelector("#import-confirm");
+      confirmButton.disabled = true;
+      try {
+        const response = await apiRequest("imports.create", {
+          method: "POST", body: pendingImport
+        });
+        showToast(response.message);
+        pendingImport = null;
+        document.querySelector("#import-file").value = "";
+        document.querySelector("#import-status").textContent = response.message;
+        await Promise.all([
+          loadImports(),
+          loadPeriods(),
+          loadCatalogs(),
+          loadDashboard(),
+          loadExpenses(),
+          loadSuppliers(),
+          loadClassifications(),
+          loadClaims()
+        ]);
+      } catch (error) {
+        document.querySelector("#import-status").textContent = error.message;
+        confirmButton.disabled = false;
+      }
+    });
+    document.querySelector("#export-expenses").addEventListener("click", async () => {
+      try {
+        const query = document.querySelector("#egresos .local-search").value.trim();
+        const data = await apiRequest("expenses", {
+          params: { month: document.querySelector("#period-select").value, q: query }
+        });
+        const company = document.querySelector("#company-filter").value;
+        const rows = data.items.filter((item) => !company || item.company === company).map((item) => [
+          item.issue_date, item.document_number, item.supplier_cuit, item.supplier_name,
+          item.category, item.cost_center, item.expense_type, item.company, item.total_amount
+        ]);
+        downloadCsv("egresos-duxs.csv", [
+          "Fecha", "Comprobante", "CUIT", "Proveedor", "Categoría", "Centro de costo",
+          "Tipo de gasto", "Empresa", "Total"
+        ], rows);
+        showToast(`${rows.length} egresos exportados.`);
+      } catch (error) {
+        showToast(error.message);
+      }
+    });
+    document.querySelector("#export-report").addEventListener("click", () => {
+      if (!dashboardData) {
+        showToast("No hay datos del reporte para exportar.");
+        return;
+      }
+      const rows = dashboardData.categories.map((item) => [item.name, item.total]);
+      downloadCsv(`reporte-categorias-${dashboardData.period}.csv`, ["Categoría", "Total neto"], rows);
+    });
     document.querySelector("#invoice-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       if (!csrfToken) {
-        showToast("No se pudo iniciar una sesión segura. Revisá la conexión a MySQL.");
+        showToast("No se pudo iniciar una sesión segura. Actualizá la página e intentá de nuevo.");
         return;
       }
       const form = event.currentTarget;
@@ -670,19 +1153,16 @@
     document.querySelector("#period-select").addEventListener("change", async (event) => {
       document.querySelector("#report-period-select").value = event.currentTarget.value;
       try { await Promise.all([loadDashboard(), loadExpenses()]); }
-      catch (error) { setConnectionState(false, error.message); }
+      catch (error) { showToast(error.message); }
     });
     document.querySelector("#report-period-select").addEventListener("change", async (event) => {
       document.querySelector("#period-select").value = event.currentTarget.value;
       try { await Promise.all([loadDashboard(), loadExpenses()]); }
-      catch (error) { setConnectionState(false, error.message); }
+      catch (error) { showToast(error.message); }
     });
     document.querySelector("#company-filter").addEventListener("change", () => {
       const search = document.querySelector("#egresos .local-search").value;
       loadExpenses(search).catch((error) => showToast(error.message));
-    });
-    document.querySelector("#claims-status-filter").addEventListener("change", () => {
-      loadClaims().catch((error) => showToast(error.message));
     });
     document.addEventListener("keydown", (event) => {
       if (event.key === "/" && !["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) {
@@ -691,7 +1171,23 @@
       }
       if (event.key === "Escape") closeMenu();
     });
-    loadAllData();
+    async function initializeApp() {
+      try {
+        const security = await apiRequest("csrf");
+        csrfToken = security.csrfToken;
+        const session = await apiRequest("auth.session");
+        if (!session.authenticated) {
+          showLogin();
+          return;
+        }
+        showAuthenticatedApp(session.user);
+        await loadAllData();
+      } catch (error) {
+        showLogin(`No se pudo validar el acceso: ${error.message}`);
+      }
+    }
+
+    initializeApp();
   </script>
 </body>
 </html>
